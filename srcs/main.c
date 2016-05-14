@@ -5,7 +5,7 @@
 ** Login   <chauch_p@epitech.net>
 ** 
 ** Started on  Fri May 13 02:12:01 2016 Pierre Chauchoy
-** Last update Fri May 13 02:54:53 2016 Pierre Chauchoy
+** Last update Sat May 14 04:46:46 2016 Pierre Chauchoy
 */
 
 #include "my_printf.h"
@@ -25,29 +25,14 @@ int			at_exit2(t_data *data)
   while (data->cases[++j])
     if (data->cases[j])
       bunny_delete_clipable((t_bunny_clipable*)data->cases[j]);
-  j = -1;
-  while (data->grid && data->grid[++j])
-    bunny_free(data->grid[j]);
-  if (data->grid)
-    bunny_free(data->grid);
+  my_free_inttab(data->grid, GRID_HEIGHT);
+  free_list(&data->list);
   return (0);
 }
 
 int			at_exit(t_data *data, char *err, int i)
 {
-  int			j;
-  int			y;
-
   at_exit2(data);
-  j = -1;
-  while (data->save_grid && data->save_grid[++j])
-    {
-      y = -1;
-      while (data->save_grid[j][++y])
-	bunny_free(data->save_grid[j][y]);
-      if (data->save_grid[j])
-	bunny_free(data->save_grid[j]);
-    }
   if (i != 0)
     my_fprintf(2, "%s\n", err);
   return (i);

@@ -5,7 +5,7 @@
 ** Login   <chauch_p@epitech.net>
 ** 
 ** Started on  Fri May 13 02:11:45 2016 Pierre Chauchoy
-** Last update Fri May 13 02:56:57 2016 Pierre Chauchoy
+** Last update Sat May 14 04:35:26 2016 Pierre Chauchoy
 */
 
 #include <time.h>
@@ -60,26 +60,6 @@ int			fill_cases(t_data *data)
   return (0);
 }
 
-int			init_save_grid(int ***save_grid)
-{
-  int			i;
-  int			y;
-
-  i = -1;
-  while (++i < NB_SAVE)
-    {
-      if (!(save_grid[i] = bunny_malloc(sizeof(int*) * (GRID_HEIGHT + 1))))
-	return (1);
-      y = -1;
-      while (++y < GRID_HEIGHT)
-	if (!(save_grid[i][y] = bunny_malloc(sizeof(int) * (GRID_WIDTH))))
-	  return (1);
-      save_grid[i][y] = NULL;
-    }
-  save_grid[i] = NULL;
-  return (0);
-}
-
 int			init_data(t_data *data, char *sprite)
 {
   srand(time(NULL));
@@ -87,7 +67,7 @@ int			init_data(t_data *data, char *sprite)
   data->pix = NULL;
   data->cases[0] = NULL;
   data->grid = NULL;
-  data->save_grid[0] = NULL;
+  init_list(&data->list);
   if (!(data->win = bunny_start_style(WIN_WIDTH, WIN_HEIGHT,
 				      TITLEBAR | CLOSE_BUTTON, "512")))
     return (at_exit(data, "Failed to start window", 1));
@@ -99,8 +79,10 @@ int			init_data(t_data *data, char *sprite)
     return (at_exit(data, "Failed to malloc grid", 1));
   if (fill_cases(data))
     return (1);
-  if (init_save_grid(data->save_grid))
-    return (at_exit(data, "Failed to malloc save grid", 1));
+  if (add_list(&data->list, data->grid))
+    return (1);
+  data->current = data->list.head;
+  blit_this(data);
   data->key = -1;
   data->play = 1;
   return (0);
